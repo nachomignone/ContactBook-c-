@@ -1,3 +1,10 @@
+#include <stdio.h>
+
+int main() {
+    printf("Hola Mundo\n");
+    return 0;
+}
+
 while (fread(&contact, sizeof(Contact), 1, file)) {
         if (strcmp(contact.name, searchName) != 0) { 
             fwrite(&contact, sizeof(Contact), 1, tempFile); 

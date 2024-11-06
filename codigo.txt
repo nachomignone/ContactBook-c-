@@ -1,3 +1,10 @@
+#incluir <stdio.h>
+
+entero principal() {
+    prenterde("Hola Munhacer\n");
+    retornar 0;
+}
+
 mientras (leer(&contact, tamañode(Contact), 1, archivo)) {
         si (comparar(contact.name, searchName) != 0) { 
             escribir(&contact, tamañode(Contact), 1, temporalFile); 
