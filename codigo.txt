@@ -1,0 +1,38 @@
+mientras (leer(&contact, tamañode(Contact), 1, archivo)) {
+        si (comparar(contact.name, searchName) != 0) { 
+            escribir(&contact, tamañode(Contact), 1, temporalFile); 
+        } sino { 
+            encontro = 1; 
+        }
+    }
+
+funcion saveContactToFile(Contact contact) {
+    FILE *archivo = abrir("contacts.dat", "ab"); 
+    si (archivo == NULO) { 
+        prenterde("Error opening archivo.\n");
+        retornar;
+    }
+}
+
+desplazar(archivo, 0, SEEK_final); 
+    long archivoSize = indicar(file); 
+    entero numContacts = archivoSize / tamañode(Contact); 
+    rebobinar(archivo); 
+
+Contact *contactsArray = (Contact *)reservarMemoria(numContacts * tamañode(Contact)); 
+    si (contactsArray == NULO) { 
+        prenterde("Memory allocation failed.\n");
+        cerrar(archivo); 
+        retornar;
+    }
+
+ordenarRapido(contactsArray, numContacts, tamañode(Contact), compareContactsByName);    
+
+si (encontro) {
+        remover("contacts.dat");
+        renombrar("temporal.dat", "contacts.dat");
+        prenterde("Contact deleted successfully.\n");
+    } sino {
+        remover("temporal.dat"); 
+        prenterde("Contact not encontro.\n");
+    }

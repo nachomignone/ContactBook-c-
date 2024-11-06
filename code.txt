@@ -1,0 +1,38 @@
+while (fread(&contact, sizeof(Contact), 1, file)) {
+        if (strcmp(contact.name, searchName) != 0) { 
+            fwrite(&contact, sizeof(Contact), 1, tempFile); 
+        } else { 
+            found = 1; 
+        }
+    }
+
+void saveContactToFile(Contact contact) {
+    FILE *file = fopen("contacts.dat", "ab"); 
+    if (file == NULL) { 
+        printf("Error opening file.\n");
+        return;
+    }
+}
+
+fseek(file, 0, SEEK_END); 
+    long fileSize = ftell(file); 
+    int numContacts = fileSize / sizeof(Contact); 
+    rewind(file); 
+
+Contact *contactsArray = (Contact *)malloc(numContacts * sizeof(Contact)); 
+    if (contactsArray == NULL) { 
+        printf("Memory allocation failed.\n");
+        fclose(file); 
+        return;
+    }
+
+qsort(contactsArray, numContacts, sizeof(Contact), compareContactsByName);    
+
+if (found) {
+        remove("contacts.dat");
+        rename("temp.dat", "contacts.dat");
+        printf("Contact deleted successfully.\n");
+    } else {
+        remove("temp.dat"); 
+        printf("Contact not found.\n");
+    }
