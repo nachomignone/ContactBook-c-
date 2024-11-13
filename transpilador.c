@@ -57,7 +57,7 @@ void translateKeyword(char *line, FILE *outputFile) { // defino funcion que reci
             buffer[pos - line] = '\0'; // agrega caracter nulo al final de lo copiado en buffer
             strcat(buffer, keywords[i].spanish); // añade al buffer la palabra clave en español
             strcat(buffer, pos + strlen(keywords[i].english)); // agrega el resto de line a buffer despues de la palabra clave en ingles
-            strcpy(line, buffer); // copia el condenido del buffer de vuelta en line, reemplazando la palabra en ingles a su traduccion
+            strcpy(line, buffer); // copia el contenido del buffer de vuelta en line, reemplazando la palabra en ingles a su traduccion
         }
     }
     fprintf(outputFile, "%s", line); // escribe line, con la traduccion ya aplicada en el archivo de salida

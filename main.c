@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-// DEFINO LA ESTRUCTURA DE CONTACTOS
-typedef struct
-{
+// DEFINO LA ESTRUCTURA DE CONTACTO
+typedef struct {
+    int id;
     char name[30]; 
     int age; 
     char phone[50];
@@ -26,14 +26,46 @@ void saveContactToFile(Contact contact) {
     printf("Contact saved successfully.\n"); // el contacto se guarda
 }
 
-
-// CREO FUNCIONES 
+// FUNCIONES QUE USO
+int generateId(); // funcion para generar ID unico para cada contacto. Se usa int asi me devuelva un valor entero
 void addContact(); // añadir contacto
 void viewContacts(); // ver contactos
 void searchContact(); // buscar contacto
 void editContact(); // editar contacto
 void deleteContact(); // eliminar contacto
 void sortContacts(); // ordenar contactos
+void deleteAllContacts(); //eliminar todos los contactos
+
+
+// FUNCION PARA LEER EL ULTIMO ID GUARDADO
+int readLastId() {
+    FILE *file =fopen("lastId.dat", "rb");
+    int lastId = 0; // si no se puede leer el archivo, comenzamos con el ID 0
+    if (file != NULL) {
+        fread(&lastId, sizeof(int), 1, file); // lee el ultimo ID guardado
+        fclose(file);
+    }
+    return lastId;
+}
+
+// FUNCION PARA GUARDAR EL ULTIMO ID UTILIZADO
+void saveLastId(int id) {
+    FILE *file = fopen("lastId.dat", "wb");
+    if(file != NULL) {
+        fwrite(&id, sizeof(int), 1, file); //guarda el ultimo ID utilizado en el archivo
+        fclose(file);
+    } else {
+        printf("Error saving the last ID.\n");
+    }
+}
+
+// FUNCION GENERADORA ID
+int generateId() {
+    int lastId = readLastId(); // lee el ultimo ID guardado
+    lastId++; // incrementa el numero de ID
+    saveLastId(lastId); // guarda el nuevo ID
+    return lastId;
+} 
 
 // FUNCION DE COMPARACION PARA 'qsort'
 int compareContactsByName(const void *a, const void *b) { // se espera recibir dos punteros 
@@ -47,8 +79,7 @@ int compareContactsByName(const void *a, const void *b) { // se espera recibir d
 }
 
 // MENU
-void displayMenu()
-{
+void displayMenu() {
     printf("Contact Book Menu\n");
     printf("1. Add Contact\n");
     printf("2. View Contacts\n");
@@ -56,46 +87,30 @@ void displayMenu()
     printf("4. Update Contact\n");
     printf("5. Delete Contact\n");
     printf("6. Sort Contacts\n");
-    printf("7. Exit\n");
+    printf("7. Delete All Contacts\n");
+    printf("8. Exit\n");
     printf("Enter your choice: \n");
 }
 
 // FUNCIONES MENU CON BUCLE DO..WHILE
-int main()
-{
+int main() {
     int choice;
-
-    do
-    {
+    
+    do {
         displayMenu();
         scanf("%d", &choice);
-
-        switch (choice){
-        case 1:
-            addContact();
-            break;
-        case 2:
-            viewContacts();
-            break;
-        case 3:
-            searchContact();
-            break;
-        case 4:
-            editContact();  
-            break;
-        case 5:
-            deleteContact();
-            break;
-        case 6:
-            sortContacts();
-            break;
-        case 7:
-            printf("Exiting Contact Book...\n");
-            break;
-        default:
-            printf("Invalid choice. Please, try again.\n");            
+        switch (choice) {
+        case 1: addContact(); break;
+        case 2: viewContacts(); break;
+        case 3: searchContact(); break;
+        case 4: editContact();   break;
+        case 5: deleteContact(); break;
+        case 6: sortContacts(); break;
+        case 7: deleteAllContacts(); break;
+        case 8: printf("Exiting Contact Book...\n"); break;
+        default: printf("Invalid choice. Please, try again.\n");            
         }
-    } while (choice != 7);
+    } while (choice != 8);
 
     return 0;
 }
@@ -105,6 +120,7 @@ int main()
 //añadir contacto
 void addContact() {
     Contact newContact; // se declara la variable llamada newContact de tipo Contact, donde se almacena temporalmente la información del nuevo contacto que se va a agregar
+    newContact.id = generateId(); // asigna un ID unico
 
     printf("Enter name: ");
     scanf(" %[^\n]", newContact.name); // el formato %[^\n] permite capturar una línea completa con espacios hasta que se detecta un salto de línea (\n).
@@ -140,6 +156,7 @@ void viewContacts() {
     Contact contact;
     printf("\nList of Contacts:\n");
     while (fread(&contact, sizeof(Contact), 1, file)) {
+        printf("ID: %d\n", contact.id);  // mostrar ID del contacto
         printf("Name: %s\n", contact.name);
         printf("Age: %d\n", contact.age);
         printf("Phone: %s\n", contact.phone);
@@ -236,11 +253,12 @@ void editContact() { // declaro la funcion
 
 //borrar contacto
 void deleteContact() {
+    int searchId;
     char searchName[30];
     int found = 0;
 
-    printf("Enter the name of the contact to delete: ");
-    scanf(" %[^\n]", searchName);
+    printf("Enter the Id of the contact to delete: ");
+    scanf(" %[^\n]", searchId);
 
     // abrir el archivo original (contacts.dat) en modo de lectura binaria
     FILE *file = fopen("contacts.dat", "rb");
@@ -330,6 +348,21 @@ void sortContacts() {
 
     free(contactsArray); // libera la memoria dinamica
     printf("Contacts sorted successfully.\n");
+}
+
+//eliminar todos los contactos
+void deleteAllContacts() {
+    FILE *file = fopen("contacts.dat", "wb");
+
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return; 
+    }
+    
+    //no es necesario hacer nada mas, al abrirlo con "wb" el archivo se vacia automaticamente
+
+    fclose(file);
+    printf("All contacts have been deleted.\n");
 }
 
 

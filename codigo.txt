@@ -43,3 +43,5 @@ si (encontro) {
         remover("temporal.dat"); 
         prenterde("Contact not encontro.\n");
     }
+
+    
